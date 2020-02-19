@@ -1,4 +1,5 @@
 using IdentityModel;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using ProxyKit;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 
@@ -55,6 +57,8 @@ namespace BlazorWasmCookieAuth.Server
                         RoleClaimType = JwtClaimTypes.Role,
                     };
                 });
+
+            services.AddHttpClient();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,6 +71,19 @@ namespace BlazorWasmCookieAuth.Server
                 app.UseDeveloperExceptionPage();
                 app.UseBlazorDebugging();
             }
+
+            app.Map("/api", api =>
+            {
+                api.RunProxy(async context =>
+                {
+                    var forwardContext = context.ForwardTo("https://localhost:5101");
+
+                    var token = await context.GetTokenAsync("access_token");
+                    forwardContext.UpstreamRequest.Headers.Add("Authorization", "Bearer " + token);
+
+                    return await forwardContext.Send();
+                });
+            });
 
             app.UseStaticFiles();
             app.UseClientSideBlazorFiles<Client.Program>();
