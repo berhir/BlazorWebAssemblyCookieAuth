@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Text;
+﻿using BlazorWasmCookieAuth.Client.Services;
 using Microsoft.AspNetCore.Blazor.Hosting;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
 
 namespace BlazorWasmCookieAuth.Client
 {
@@ -12,6 +11,9 @@ namespace BlazorWasmCookieAuth.Client
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
+            builder.Services.AddOptions();
+            builder.Services.AddAuthorizationCore();
+            builder.Services.AddSingleton<AuthenticationStateProvider, HostAuthenticationStateProvider>();
             builder.RootComponents.Add<App>("app");
 
             await builder.Build().RunAsync();
