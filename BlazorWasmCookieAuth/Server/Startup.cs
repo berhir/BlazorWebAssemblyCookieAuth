@@ -39,11 +39,17 @@ namespace BlazorWasmCookieAuth.Server
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
                     options.Cookie.SameSite = SameSiteMode.Strict;
+
+                    options.Events.OnSigningOut = async e =>
+                    {
+                        await e.HttpContext.RevokeUserRefreshTokenAsync();
+                    };
                 })
                 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
                 {
                     options.Authority = "https://demo.identityserver.io/";
-                    options.ClientId = "interactive.confidential";
+                    // to test token refresh, we use 'interactive.confidential.short' -> token life time is 75 seconds
+                    options.ClientId = "interactive.confidential.short";
                     options.ClientSecret = "secret";
                     options.ResponseType = OpenIdConnectResponseType.Code;
                     options.Scope.Add("api");
@@ -58,7 +64,13 @@ namespace BlazorWasmCookieAuth.Server
                     };
                 });
 
-            services.AddHttpClient();
+            services.AddAccessTokenManagement();
+            services.AddProxy((clientBuilder) =>
+            {
+                // adds the access token to all forwarded requests,
+                // and refreshes the access token if needed.
+                clientBuilder.AddUserAccessTokenHandler();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,25 +84,21 @@ namespace BlazorWasmCookieAuth.Server
                 app.UseBlazorDebugging();
             }
 
-            app.Map("/api", api =>
-            {
-                api.RunProxy(async context =>
-                {
-                    var forwardContext = context.ForwardTo("https://localhost:5101");
-
-                    var token = await context.GetTokenAsync("access_token");
-                    forwardContext.UpstreamRequest.Headers.Add("Authorization", "Bearer " + token);
-
-                    return await forwardContext.Send();
-                });
-            });
-
             app.UseStaticFiles();
             app.UseClientSideBlazorFiles<Client.Program>();
 
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.Map("/api", api =>
+            {
+                api.RunProxy(async context =>
+                {
+                    var forwardContext = context.ForwardTo("https://localhost:5101");
+                    return await forwardContext.Send();
+                });
+            });
 
             app.UseEndpoints(endpoints =>
             {
