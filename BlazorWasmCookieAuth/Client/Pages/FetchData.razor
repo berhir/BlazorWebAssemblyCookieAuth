@@ -1,6 +1,6 @@
 ﻿@page "/fetchdata"
 @using BlazorWasmCookieAuth.Shared
-@inject HttpClient Http
+@inject Services.FetchWeatherForecastService WeatherService
 
 <h1>Weather forecast</h1>
 
@@ -40,7 +40,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetJsonAsync<WeatherForecast[]>("api/WeatherForecast");
+        forecasts = await WeatherService.GetPublicWeatherForeacast();
     }
-
 }
