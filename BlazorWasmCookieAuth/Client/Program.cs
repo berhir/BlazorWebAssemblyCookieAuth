@@ -1,8 +1,10 @@
 ﻿using BlazorWasmCookieAuth.Client.Services;
-using Microsoft.AspNetCore.Blazor.Hosting;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace BlazorWasmCookieAuth.Client
@@ -17,6 +19,7 @@ namespace BlazorWasmCookieAuth.Client
             builder.Services.TryAddSingleton<AuthenticationStateProvider, HostAuthenticationStateProvider>();
             builder.Services.TryAddSingleton(sp => (HostAuthenticationStateProvider)sp.GetRequiredService<AuthenticationStateProvider>());
             builder.Services.AddTransient<AuthorizedHandler>();
+            builder.Services.AddSingleton(new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddHttpClient("authorizedClient")
                 .AddHttpMessageHandler<AuthorizedHandler>();
             builder.Services.AddTransient<FetchWeatherForecastService>();

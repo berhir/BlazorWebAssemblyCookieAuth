@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace BlazorWasmCookieAuth.Client.Services
@@ -20,12 +21,12 @@ namespace BlazorWasmCookieAuth.Client.Services
 
         public async Task<WeatherForecast[]> GetPublicWeatherForeacast()
         {
-            return await _publicApiClient.GetJsonAsync<WeatherForecast[]>("api/WeatherForecast");
+            return await _publicApiClient.GetFromJsonAsync<WeatherForecast[]>("api/WeatherForecast");
         }
 
         public async Task<WeatherForecast[]> GetProtectedWeatherForeacast()
         {
-            return await _protectedApiClient.GetJsonAsync<WeatherForecast[]>("api/WeatherForecast/protected");
+            return await _protectedApiClient.GetFromJsonAsync<WeatherForecast[]>("api/WeatherForecast/protected");
         }
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -67,7 +68,7 @@ namespace BlazorWasmCookieAuth.Client.Services
 
             try
             {
-                user = await _client.GetJsonAsync<UserInfo>("User");
+                user = await _client.GetFromJsonAsync<UserInfo>("User");
             }
             catch (Exception exc)
             {
