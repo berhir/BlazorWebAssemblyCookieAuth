@@ -19,9 +19,10 @@ namespace BlazorWasmCookieAuth.Client
             builder.Services.TryAddSingleton<AuthenticationStateProvider, HostAuthenticationStateProvider>();
             builder.Services.TryAddSingleton(sp => (HostAuthenticationStateProvider)sp.GetRequiredService<AuthenticationStateProvider>());
             builder.Services.AddTransient<AuthorizedHandler>();
-            builder.Services.AddSingleton(new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddHttpClient("default", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
             builder.Services.AddHttpClient("authorizedClient")
                 .AddHttpMessageHandler<AuthorizedHandler>();
+            builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("default"));
             builder.Services.AddTransient<FetchWeatherForecastService>();
 
             builder.RootComponents.Add<App>("app");
