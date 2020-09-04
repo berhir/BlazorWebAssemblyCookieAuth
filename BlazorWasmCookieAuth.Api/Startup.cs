@@ -8,7 +8,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace BlazorWasmCookieAuth.Api
@@ -85,8 +84,9 @@ namespace BlazorWasmCookieAuth.Api
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "BlazorWasmCookieAuth");
 
-                c.OAuthClientId("implicit");
-                c.OAuthAppName("Implicit Client");
+                // Unfortunately, the demo.identityserver.io project doesn't support the implicit flow (that is required by Swagger UI) anymore
+                //c.OAuthClientId("implicit");
+                //c.OAuthAppName("Implicit Client");
             });
 
 
