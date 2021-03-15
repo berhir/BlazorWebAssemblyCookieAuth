@@ -11,6 +11,8 @@ namespace BlazorWasmCookieAuth.Server.Controllers
         [HttpGet("Login")]
         public ActionResult Login(string returnUrl)
         {
+            if (!Url.IsLocalUrl(returnUrl) throw new Exception("Attack!");
+            
             return Challenge(new AuthenticationProperties { RedirectUri = !string.IsNullOrEmpty(returnUrl) ? returnUrl : "/" });
         }
 
