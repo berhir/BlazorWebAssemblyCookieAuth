@@ -9,7 +9,7 @@ namespace BlazorWasmCookieAuth.Server.Controllers
     public class AccountController : ControllerBase
     {
         [HttpGet("Login")]
-        public ActionResult Login(string returnUrl)
+        public ActionResult Login(string returnUrl = "/")
         {
             if (!Url.IsLocalUrl(returnUrl))
             {
@@ -17,7 +17,7 @@ namespace BlazorWasmCookieAuth.Server.Controllers
                 return BadRequest(ModelState);
             }
 
-            return Challenge(new AuthenticationProperties { RedirectUri = !string.IsNullOrEmpty(returnUrl) ? returnUrl : "/" });
+            return Challenge(new AuthenticationProperties { RedirectUri = returnUrl });
         }
 
         [HttpGet("Logout")]
