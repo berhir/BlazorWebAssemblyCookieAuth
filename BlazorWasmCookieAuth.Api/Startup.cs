@@ -50,10 +50,17 @@ namespace BlazorWasmCookieAuth.Api
                     Type = SecuritySchemeType.OAuth2,
                     Flows = new OpenApiOAuthFlows
                     {
-                        Implicit = new OpenApiOAuthFlow
+                        AuthorizationCode = new OpenApiOAuthFlow
                         {
                             AuthorizationUrl = new Uri("https://demo.identityserver.io/connect/authorize"),
-                            Scopes = { { "api", "api" } },
+                            TokenUrl = new Uri("https://demo.identityserver.io/connect/token"),
+                            Scopes = {
+                                { "openid", "openid" },
+                                { "profile", "profile" },
+                                { "email", "email" },
+                                { "api", "api" },
+                                { "offline_access", "offline_access" },
+                            },
                         },
                     },
                 });
@@ -84,9 +91,10 @@ namespace BlazorWasmCookieAuth.Api
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "BlazorWasmCookieAuth");
 
-                // Unfortunately, the demo.identityserver.io project doesn't support the implicit flow (that is required by Swagger UI) anymore
-                //c.OAuthClientId("implicit");
-                //c.OAuthAppName("Implicit Client");
+                c.OAuthAppName("BlazorWasmCookieAuth API");
+                c.OAuthClientId("interactive.public");
+                c.OAuthScopes("openid", "profile", "email", "api", "offline_access");
+                c.OAuthUsePkce();
             });
 
 
