@@ -5,11 +5,11 @@ using System.Net.Http;
 
 namespace BlazorWasmCookieAuth.Server
 {
-    public class AuthenticatedProxyHttpClientFactory : IProxyHttpClientFactory
+    public class UserAccessTokenProxyHttpClientFactory : IProxyHttpClientFactory
     {
         private readonly UserAccessTokenHandler _userAccessTokenHandler;
 
-        public AuthenticatedProxyHttpClientFactory(UserAccessTokenHandler userAccessTokenHandler)
+        public UserAccessTokenProxyHttpClientFactory(UserAccessTokenHandler userAccessTokenHandler)
         {
             _userAccessTokenHandler = userAccessTokenHandler;
 

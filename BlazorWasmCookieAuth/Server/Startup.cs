@@ -66,7 +66,7 @@ namespace BlazorWasmCookieAuth.Server
                 });
 
             services.AddAccessTokenManagement();
-            services.AddSingleton<IProxyHttpClientFactory, AuthenticatedProxyHttpClientFactory>();
+            services.AddSingleton<IProxyHttpClientFactory, UserAccessTokenProxyHttpClientFactory>();
             services.AddReverseProxy()
                 .LoadFromConfig(Configuration.GetSection("ReverseProxy"));
         }
