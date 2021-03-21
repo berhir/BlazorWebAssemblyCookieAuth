@@ -5,17 +5,25 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
-using ProxyKit;
+using Microsoft.ReverseProxy.Service.Proxy.Infrastructure;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace BlazorWasmCookieAuth.Server
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -58,12 +66,9 @@ namespace BlazorWasmCookieAuth.Server
                 });
 
             services.AddAccessTokenManagement();
-            services.AddProxy((clientBuilder) =>
-            {
-                // adds the access token to all forwarded requests,
-                // and refreshes the access token if needed.
-                clientBuilder.AddUserAccessTokenHandler();
-            });
+            services.AddSingleton<IProxyHttpClientFactory, UserAccessTokenProxyHttpClientFactory>();
+            services.AddReverseProxy()
+                .LoadFromConfig(Configuration.GetSection("ReverseProxy"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -83,17 +88,9 @@ namespace BlazorWasmCookieAuth.Server
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.Map("/api", api =>
-            {
-                api.RunProxy(async context =>
-                {
-                    var forwardContext = context.ForwardTo("https://localhost:5101");
-                    return await forwardContext.Send();
-                });
-            });
-
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapReverseProxy();
                 endpoints.MapControllers();
                 endpoints.MapFallbackToFile("index.html");
             });
