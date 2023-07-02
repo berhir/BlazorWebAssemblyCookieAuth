@@ -31,7 +31,7 @@ namespace BlazorWasmCookieAuth.Api
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
-                    options.Authority = "https://demo.identityserver.io/";
+                    options.Authority = "https://demo.duendesoftware.com/";
                     options.Audience = "api";
 
                     options.TokenValidationParameters = new TokenValidationParameters
@@ -52,8 +52,8 @@ namespace BlazorWasmCookieAuth.Api
                     {
                         AuthorizationCode = new OpenApiOAuthFlow
                         {
-                            AuthorizationUrl = new Uri("https://demo.identityserver.io/connect/authorize"),
-                            TokenUrl = new Uri("https://demo.identityserver.io/connect/token"),
+                            AuthorizationUrl = new Uri("https://demo.duendesoftware.com/connect/authorize"),
+                            TokenUrl = new Uri("https://demo.duendesoftware.com/connect/token"),
                             Scopes = {
                                 { "openid", "openid" },
                                 { "profile", "profile" },

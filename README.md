@@ -5,3 +5,6 @@ In January 2019, Dominick Baier (known for his work on [IdentityServer](https://
 This is a sample implementation with a Blazor WebAssembly SPA as front-end.
 
 You can find more details in my blog post "[Secure a Blazor WebAssembly application with cookie authentication](https://guidnew.com/en/blog/secure-a-blazor-webassembly-application-with-cookie-authentication/)".
+
+
+Updated to work with NET 7 and new demo server.

@@ -40,7 +40,7 @@ namespace BlazorWasmCookieAuth.Server
                 })
                 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
                 {
-                    options.Authority = "https://demo.identityserver.io/";
+                    options.Authority = "https://demo.duendesoftware.com/";
                     // to test token refresh, we use 'interactive.confidential.short' -> token life time is 75 seconds
                     options.ClientId = "interactive.confidential.short";
                     options.ClientSecret = "secret";
